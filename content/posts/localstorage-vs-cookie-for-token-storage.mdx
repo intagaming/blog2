@@ -1,12 +1,13 @@
 ---
 type: post
 title: localStorage vs. Cookie for token storage
+slug: localstorage-vs-cookie-for-token-storage
 author: An7
+publication_date: "2021-09-24"
+excerpt: localStorage is not as unsecured as you'd think.
 ---
 
 # localStorage vs. Cookie for token storage
-
-localStorage is not as unsecured as you'd think.
 
 You know the drill. Authentication time, you chuck the access token into your `localStorage`. Suddenly you have a flashback of bad luck working with `localStorage`, namely they could _easily_ be taken by a script via Cross-Site Scripting. So you turned to `httpOnly` cookie (along with some other attributes, stay tuned). You even went as far as using a refresh token, and implement a CSRF token thing. Solved, right?
 

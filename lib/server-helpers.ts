@@ -2,8 +2,11 @@ import blogConfig from "blog.config";
 import { readFile } from "fs/promises";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import glob from "glob-promise";
+import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
-import { NavBarEntry, PageFrontmatter } from "types/blog";
+import { basename } from "path";
+import { NavBarEntry, PageFrontmatter, PostFrontmatter } from "types/blog";
+import { parseDate } from "./client-helpers";
 
 export const getMDXPathFromSlug = async (slug: string): Promise<string> => {
   const matches = await glob(`content/**/${slug}.mdx`);
@@ -17,6 +20,14 @@ export const getMDXFromSlug = async (slug: string): Promise<string> => {
   const path = await getMDXPathFromSlug(slug);
   const content = await readFile(path);
   return content.toString();
+};
+
+export const getParsedMDXFromSlug = async (
+  slug: string
+): Promise<MDXRemoteSerializeResult> => {
+  const mdx = await getMDXFromSlug(slug);
+  const parsed = await serialize(mdx, { parseFrontmatter: true });
+  return parsed;
 };
 
 export const getDefaultNavBarEntries = async (): Promise<NavBarEntry[]> => {
@@ -35,4 +46,27 @@ export const getDefaultNavBarEntries = async (): Promise<NavBarEntry[]> => {
     slug: pageSlugs[index],
     title,
   }));
+};
+
+export const getPostSlugs = async () =>
+  (await glob(`content/posts/*.mdx`)).map((path) => basename(path, ".mdx"));
+
+export const getPosts = async (): Promise<MDXRemoteSerializeResult[]> => {
+  const slugs = await getPostSlugs();
+  const posts = await Promise.all(
+    slugs.map((slug) => getParsedMDXFromSlug(slug))
+  );
+
+  // Sort posts by DESC publication date
+  posts.sort((a, b) => {
+    const aFrontmatter = a.frontmatter as unknown as PostFrontmatter;
+    const bFrontmatter = b.frontmatter as unknown as PostFrontmatter;
+
+    return (
+      parseDate(bFrontmatter.publication_date).getUTCDate() -
+      parseDate(aFrontmatter.publication_date).getUTCDate()
+    );
+  });
+
+  return posts;
 };

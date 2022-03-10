@@ -5,7 +5,10 @@ export interface PostOrPageFrontmatter {
 export interface PostFrontmatter extends PostOrPageFrontmatter {
   type: "post";
   title: string;
+  slug: string;
   author: string;
+  excerpt: string;
+  publication_date: string;
 }
 
 export interface PageFrontmatter extends PostOrPageFrontmatter {

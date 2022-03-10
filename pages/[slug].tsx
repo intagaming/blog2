@@ -4,7 +4,7 @@ import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import path from "path";
 import { serialize } from "next-mdx-remote/serialize";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
-import { getDefaultNavBarEntries, getMDXFromSlug } from "lib/helpers";
+import { getDefaultNavBarEntries, getMDXFromSlug } from "lib/server-helpers";
 import { NavBarEntry, PostOrPageFrontmatter } from "types/blog";
 import PostLayout from "components/PostLayout";
 import PageLayout from "components/PageLayout";
