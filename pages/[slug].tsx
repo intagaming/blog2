@@ -4,34 +4,35 @@ import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import path from "path";
 import { serialize } from "next-mdx-remote/serialize";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
-import { getMDXFromSlug } from "lib/helpers";
-import { PostOrPage } from "types/blog";
+import { getDefaultNavBarEntries, getMDXFromSlug } from "lib/helpers";
+import { NavBarEntry, PostOrPageFrontmatter } from "types/blog";
 import PostLayout from "components/PostLayout";
 import PageLayout from "components/PageLayout";
 
 type Props = {
-  source: MDXRemoteSerializeResult;
+  mdxParsed: MDXRemoteSerializeResult;
+  navBarEntries: NavBarEntry[];
 };
 
-const BlogPage: NextPage<Props> = ({ source }: Props) => {
-  const { frontmatter } = source;
+const BlogPage: NextPage<Props> = ({ mdxParsed, navBarEntries }: Props) => {
+  const { frontmatter } = mdxParsed;
 
-  const castedFrontmatter = frontmatter as unknown as PostOrPage;
+  const castedFrontmatter = frontmatter as unknown as PostOrPageFrontmatter;
   if (castedFrontmatter.type !== "post" && castedFrontmatter !== "page") {
     throw Error(`Type invalid: ${castedFrontmatter.type}`);
   }
 
   // eslint-disable-next-line react/jsx-props-no-spreading
-  const renderedMDX = <MDXRemote {...source} />;
+  const renderedMDX = <MDXRemote {...mdxParsed} />;
 
   return (
     <>
       {castedFrontmatter.type === "post" && (
-        <PostLayout>{renderedMDX}</PostLayout>
+        <PostLayout navBarEntries={navBarEntries}>{renderedMDX}</PostLayout>
       )}
 
       {castedFrontmatter.type === "page" && (
-        <PageLayout>{renderedMDX}</PageLayout>
+        <PageLayout navBarEntries={navBarEntries}>{renderedMDX}</PageLayout>
       )}
     </>
   );
@@ -53,10 +54,12 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
   const { slug } = params;
   const mdx = await getMDXFromSlug(slug);
 
-  const source = await serialize(mdx, { parseFrontmatter: true });
+  const mdxParsed = await serialize(mdx, { parseFrontmatter: true });
+
+  const navBarEntries = await getDefaultNavBarEntries();
 
   return {
-    props: { source },
+    props: { mdxParsed, navBarEntries },
   };
 };
 
