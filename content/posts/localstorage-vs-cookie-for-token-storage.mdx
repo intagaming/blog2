@@ -1,0 +1,70 @@
+---
+type: post
+title: localStorage vs. Cookie for token storage
+author: An7
+---
+
+# localStorage vs. Cookie for token storage
+
+localStorage is not as unsecured as you'd think.
+
+You know the drill. Authentication time, you chuck the access token into your `localStorage`. Suddenly you have a flashback of bad luck working with `localStorage`, namely they could _easily_ be taken by a script via Cross-Site Scripting. So you turned to `httpOnly` cookie (along with some other attributes, stay tuned). You even went as far as using a refresh token, and implement a CSRF token thing. Solved, right?
+
+## You missed a point about cookies
+
+Whenever you touch a cookie, you are blessed with a **new** problem: Cross-Site Request Forgery a.k.a. CSRF. Take this from OWASP Cheat Sheet of CSRF Prevention, I'll provide an example later.
+
+> [Remember that any Cross-Site Scripting (XSS) can be used to defeat all CSRF mitigation techniques!](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)
+
+Let's switch gears here. I'm gonna implement a CSRF mitigation. According to the Cheat Sheet, I have to implement something called a _Double Submit Cookie_ (I'm cutting corners here, we are in a stateless development age, there's no server state, just in case you wonder why not the _Synchronizer Token Pattern_).
+
+I'm at the Cheat Sheet. Here's the steps:
+
+1. On the server side, I would have to generate a pseudorandom value and put them in a cookie.
+2. Every time I need to send out a request, I would put that value (also called a CSRF token) into a header field - something along the lines of `X-XSRF-Token` - and the request body (the request parameter if it's a GET request, and in the JSON body if it's not a GET request).
+3. On the server side again, I would have to implement a comparison between those two.
+
+The end result is, if the attacker do the CSRF now, they would need to:
+
+1. Set a freshly dummy value, replacing the CSRF token in the request body. Easy enough. For example, `GET /api?csrfToken=MY_DUMMY_VALUE`
+2. Modify the `csrfToken` cookie to `MY_DUMMY_VALUE`. Not trivial, but doable.
+
+[Now you go read this document from OWASP and find out that your attempt is flawed.](https://owasp.org/www-pdf-archive/David_Johansson-Double_Defeat_of_Double-Submit_Cookie.pdf) Then, [read this from StackOverflow if you store the csrfToken not in the cookie, but in localStorage](https://stackoverflow.com/a/37169633). If you go as far as using `httpOnly SameSite=Strict Secure` settings, remember that [Setting a cookie as Strict can affect browsing experience negatively](https://www.netsparker.com/blog/web-security/same-site-cookie-attribute-prevent-cross-site-request-forgery).
+
+### Here's my take on it.
+
+See, you **have to** put the CSRF token in the body. That means your CSRF token _cannot_ be `httpOnly`, because it prevents JavaScript from reading the cookie. Have you realized yet? You just achieved Cross-Site Scripting. If your JavaScript can read your cookie, so do mine.
+
+> But it makes the access token harder for the attacker to get than localStorage! If not they'd just snatch it!
+
+So what? Take this, _your website has a Cross-Site Scripting problem, not CSRF_. Do you sleep well on that? You have just gone full circle. `localStorage` has XSS problem, but cookie has CSRF **and** XSS. _That's why I'm not eating the cookies_.
+
+Side note: About the Refresh Token, it does not solve anything. Just face it, you are storing your Refresh Token in some way that could be susceptible to XSS attacks. It's game over then. Check your implementation if you have any doubt.
+
+## Fixing the myth of localStorage by mending XSS
+
+Let's debunk this. You got the XSS problem. _Deal with it_. There's a reason why `dangerouslySetInnerHTML` exists.
+
+So where are you getting these foreign scripts to run on your site? Let's start with some of the greatest archnemesis of `localStorage` doubters.
+
+### XSS from Node libraries
+
+I'm talking about your `node_modules` when you're deploying on Vercel or something. Think about it. There are literally from hundreds to millions of projects using that very same library. If that happens, you **would** know. You would definitely know. [Here's something from GitLab to let them check for your development comfort](https://docs.gitlab.com/ee/user/application_security/dependency_scanning). Or just run `yarn audit`.
+
+### XSS from CDN libraries
+
+Alright, here's the interesting part. CDNs can be compromised. Why do you use them though? Just use NPM. And how do you use TypeScript with CDN anyway? Why are your libraries not available in NPM? If it's that niche, why not just write them yourselves if you're literally 1 out of the 3 people that would use those? _Why do I have so many questions for you?_
+
+If you're using libraries from CDNs I think you're having a bigger problem.
+
+### XSS from JS injection
+
+Also called a _Stored XSS_. Or any JS injection from _form inputs_. It's pretty hard to screw up something that would cause XSS without you knowing first-hand. [Take a look at this StackOverflow on why React has some XSS-proof.](https://stackoverflow.com/q/33644499) Make sure to make use of some ESLint, those are pretty handy.
+
+In the nutshell, it's pretty hard these days to get XSS if you're doing things right.
+
+## The winner
+
+`localStorage`. I just stripped out a workday of effort in your life by doing so. There's nothing about that anymore, right? The stereotypical thing about `localStorage` is, they have XSS problem, and they do, just as your CSRF mitigation. Don't overengineer your system.
+
+Here's something you'll dig: [Why avoiding LocalStorage for tokens is the wrong solution](https://pragmaticwebsecurity.com/articles/oauthoidc/localstorage-xss.html)

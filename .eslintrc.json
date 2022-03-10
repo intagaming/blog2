@@ -8,7 +8,7 @@
     "plugin:react/jsx-runtime"
   ],
   "parserOptions": {
-    "project": "./tsconfig.json"
+    "project": "./tsconfig.eslint.json"
   },
   "rules": {
     "react/function-component-definition": [
@@ -17,6 +17,7 @@
         "namedComponents": "arrow-function"
       }
     ],
-    "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts"] }]
+    "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts"] }],
+    "jsx-a11y/anchor-is-valid": [0]
   }
 }
