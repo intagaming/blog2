@@ -17,11 +17,14 @@ export const optimizeImages: Plugin<[]> = () => async (tree) => {
   visit(tree, { tagName: "img" }, (node: ImageElement) => {
     promises.push(
       (async () => {
-        const path = `public/${node.properties.src}`;
-        const { width, height } = await getDimensions(path);
+        const { width, height } = await getDimensions(
+          `public/${node.properties.src}`
+        );
         node.tagName = "Image";
         node.properties.placeholder = "blur";
-        node.properties.blurDataURL = await getPlaceholder(path);
+        node.properties.blurDataURL = await getPlaceholder(
+          `/${node.properties.src}`
+        );
         node.properties.width = width;
         node.properties.height = height;
       })()

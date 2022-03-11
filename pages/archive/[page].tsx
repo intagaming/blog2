@@ -74,7 +74,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
   const coverBlurDataURLs = await Promise.all(
     posts.map((post) =>
       getPlaceholder(
-        `public/${(post.frontmatter as unknown as PostFrontmatter).cover_url}`
+        `/${(post.frontmatter as unknown as PostFrontmatter).cover_url}`
       )
     )
   );

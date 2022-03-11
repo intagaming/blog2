@@ -1,8 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { encode } from "blurhash";
 import { createReadStream } from "fs";
 import probe from "probe-image-size";
-import sharp from "sharp";
+import { getPlaiceholder } from "plaiceholder";
 import { ImageDimensions } from "../types/ImageDimensions";
 import { isRemoteURL } from "./helpers";
 
@@ -17,17 +16,7 @@ export const getDimensions = async (url: string): Promise<ImageDimensions> => {
   return { width, height };
 };
 
-export const getPlaceholder = (path: string): Promise<string> =>
-  new Promise((resolve, reject) => {
-    sharp(path)
-      .raw()
-      .ensureAlpha()
-      .resize(32, 32, { fit: "inside" })
-      .toBuffer((err, buffer, { width, height }) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(encode(new Uint8ClampedArray(buffer), width, height, 4, 4));
-      });
-  });
+export const getPlaceholder = async (url: string): Promise<string> => {
+  const { base64 } = await getPlaiceholder(url);
+  return base64;
+};
