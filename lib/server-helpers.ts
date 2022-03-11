@@ -68,8 +68,8 @@ export const getPosts = async (): Promise<MDXRemoteSerializeResult[]> => {
     const bFrontmatter = b.frontmatter as unknown as PostFrontmatter;
 
     return (
-      parseDate(bFrontmatter.publication_date).getUTCDate() -
-      parseDate(aFrontmatter.publication_date).getUTCDate()
+      parseDate(bFrontmatter.publication_date).getTime() -
+      parseDate(aFrontmatter.publication_date).getTime()
     );
   });
 
