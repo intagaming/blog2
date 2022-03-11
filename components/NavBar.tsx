@@ -57,9 +57,7 @@ const NavBar = ({ entries }: Props) => {
           ))}
         </div>
 
-        <div className="flex-1 md:hidden" />
-
-        <div className="flex-1 hidden md:flex justify-end">
+        <div className="flex-1 flex justify-end">
           <button type="button">
             <svg
               xmlns="http://www.w3.org/2000/svg"
