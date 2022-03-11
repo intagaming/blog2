@@ -1,4 +1,4 @@
-import { parseDate } from "lib/client-helpers";
+import { parseDate } from "lib/helpers";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import Link from "next/link";
 import { PostFrontmatter } from "types/blog";

@@ -4,7 +4,7 @@ import { createReadStream } from "fs";
 import probe from "probe-image-size";
 import sharp from "sharp";
 import { ImageDimensions } from "../types/ImageDimensions";
-import { isRemoteURL } from "./client-helpers";
+import { isRemoteURL } from "./helpers";
 
 export const getDimensions = async (url: string): Promise<ImageDimensions> => {
   let width;

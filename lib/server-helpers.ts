@@ -6,7 +6,7 @@ import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
 import { basename } from "path";
 import { NavBarEntry, PageFrontmatter, PostFrontmatter } from "types/blog";
-import { parseDate } from "./client-helpers";
+import { parseDate } from "./helpers";
 import { optimizeImages } from "./unified";
 
 export const getMDXPathFromSlug = async (slug: string): Promise<string> => {
