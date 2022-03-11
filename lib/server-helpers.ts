@@ -7,6 +7,7 @@ import { serialize } from "next-mdx-remote/serialize";
 import { basename } from "path";
 import { NavBarEntry, PageFrontmatter, PostFrontmatter } from "types/blog";
 import { parseDate } from "./client-helpers";
+import { optimizeImages } from "./unified";
 
 export const getMDXPathFromSlug = async (slug: string): Promise<string> => {
   const matches = await glob(`content/**/${slug}.mdx`);
@@ -26,7 +27,12 @@ export const getParsedMDXFromSlug = async (
   slug: string
 ): Promise<MDXRemoteSerializeResult> => {
   const mdx = await getMDXFromSlug(slug);
-  const parsed = await serialize(mdx, { parseFrontmatter: true });
+  const parsed = await serialize(mdx, {
+    parseFrontmatter: true,
+    mdxOptions: {
+      rehypePlugins: [optimizeImages],
+    },
+  });
   return parsed;
 };
 
@@ -35,8 +41,7 @@ export const getDefaultNavBarEntries = async (): Promise<NavBarEntry[]> => {
 
   // Fetch titles
   const fromSlugToTitle = async (slug: string): Promise<string> => {
-    const content = await getMDXFromSlug(slug);
-    const mdxParseResult = await serialize(content, { parseFrontmatter: true });
+    const mdxParseResult = await getParsedMDXFromSlug(slug);
     return (mdxParseResult.frontmatter as unknown as PageFrontmatter).title;
   };
   const titlesPromises = pageSlugs.map((slug) => fromSlugToTitle(slug));

@@ -1,19 +1,32 @@
+/* eslint-disable react/jsx-props-no-spreading */
+import NextImage from "components/mdx/NextImage";
+import PageLayout from "components/PageLayout";
+import PostLayout from "components/PostLayout";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { glob } from "glob";
+import {
+  getDefaultNavBarEntries,
+  getParsedMDXFromSlug,
+} from "lib/server-helpers";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
-import path from "path";
-import { serialize } from "next-mdx-remote/serialize";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
-import { getDefaultNavBarEntries, getMDXFromSlug } from "lib/server-helpers";
+import path from "path";
 import { NavBarEntry, PostOrPageFrontmatter } from "types/blog";
-import PostLayout from "components/PostLayout";
-import PageLayout from "components/PageLayout";
 
 type Props = {
   mdxParsed: MDXRemoteSerializeResult;
   navBarEntries: NavBarEntry[];
 };
 
+const mdxComponents: import("mdx/types").MDXComponents = {
+  // @ts-ignore
+  Image: (props) => <NextImage {...props} />,
+};
+
+/**
+ * Each BlogPage should correspond to a MDX file of a post or a page in the
+ * /content folder.
+ */
 const BlogPage: NextPage<Props> = ({ mdxParsed, navBarEntries }: Props) => {
   const { frontmatter } = mdxParsed;
 
@@ -23,7 +36,7 @@ const BlogPage: NextPage<Props> = ({ mdxParsed, navBarEntries }: Props) => {
   }
 
   // eslint-disable-next-line react/jsx-props-no-spreading
-  const renderedMDX = <MDXRemote {...mdxParsed} />;
+  const renderedMDX = <MDXRemote {...mdxParsed} components={mdxComponents} />;
 
   return (
     <>
@@ -52,9 +65,8 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
   }
 
   const { slug } = params;
-  const mdx = await getMDXFromSlug(slug);
 
-  const mdxParsed = await serialize(mdx, { parseFrontmatter: true });
+  const mdxParsed = await getParsedMDXFromSlug(slug);
 
   const navBarEntries = await getDefaultNavBarEntries();
 

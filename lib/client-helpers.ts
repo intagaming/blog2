@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 // https://stackoverflow.com/a/2587398
 // parse a date in yyyy-mm-dd format
 export function parseDate(input: string) {
@@ -9,4 +8,9 @@ export function parseDate(input: string) {
     parseInt(parts[1], 10) - 1,
     parseInt(parts[2], 10)
   ); // Note: months are 0-based
+}
+
+export function isRemoteURL(url: string) {
+  const r = /^(?:[a-z]+:)?\/\//i;
+  return r.test(url);
 }
