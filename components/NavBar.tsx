@@ -21,7 +21,7 @@ const NavBar = ({ entries }: Props) => {
 
   return (
     <>
-      <nav className="flex items-center h-16 px-4 shadow-sm gap-6">
+      <nav className="flex items-center h-16 px-4 border-b gap-6">
         <button
           type="button"
           className="flex-1 md:hidden"

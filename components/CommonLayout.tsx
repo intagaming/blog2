@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { NavBarEntry } from "types/blog";
+import Footer from "./Footer";
 import NavBar from "./NavBar";
 
 type Props = {
@@ -8,10 +9,11 @@ type Props = {
 };
 
 const CommonLayout = ({ navBarEntries, children }: Props) => (
-  <>
+  <div className="min-h-screen flex flex-col">
     <NavBar entries={navBarEntries} />
-    {children}
-  </>
+    <div className="flex-1">{children}</div>
+    <Footer />
+  </div>
 );
 
 CommonLayout.defaultProps = {
