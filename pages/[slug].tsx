@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import NextImage from "components/mdx/NextImage";
-import PageLayout from "components/PageLayout";
-import PostLayout from "components/PostLayout";
+import PostOrPageLayout from "components/PostOrPageLayout";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { glob } from "glob";
 import {
@@ -39,15 +38,9 @@ const BlogPage: NextPage<Props> = ({ mdxParsed, navBarEntries }: Props) => {
   const renderedMDX = <MDXRemote {...mdxParsed} components={mdxComponents} />;
 
   return (
-    <>
-      {castedFrontmatter.type === "post" && (
-        <PostLayout navBarEntries={navBarEntries}>{renderedMDX}</PostLayout>
-      )}
-
-      {castedFrontmatter.type === "page" && (
-        <PageLayout navBarEntries={navBarEntries}>{renderedMDX}</PageLayout>
-      )}
-    </>
+    <PostOrPageLayout navBarEntries={navBarEntries}>
+      {renderedMDX}
+    </PostOrPageLayout>
   );
 };
 

@@ -7,14 +7,16 @@ type Props = {
   children: ReactNode;
 };
 
-const PageLayout = ({ navBarEntries, children }: Props) => (
+const PostOrPageLayout = ({ navBarEntries, children }: Props) => (
   <CommonLayout navBarEntries={navBarEntries}>
-    <article className="prose xl:prose-xl">{children}</article>
+    <article className="prose xl:prose-xl mx-auto my-10 md:my-20 px-4 md:px-0">
+      {children}
+    </article>
   </CommonLayout>
 );
 
-PageLayout.defaultProps = {
+PostOrPageLayout.defaultProps = {
   navBarEntries: [],
 };
 
-export default PageLayout;
+export default PostOrPageLayout;
