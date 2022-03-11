@@ -1,28 +1,30 @@
 import CommonLayout from "components/CommonLayout";
 import PostCard from "components/PostCard";
 import { getPlaceholder } from "lib/images";
-import { getPosts } from "lib/server-helpers";
+import { getDefaultNavBarEntries, getPosts } from "lib/server-helpers";
 import type { GetStaticProps, NextPage } from "next";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
-import { PostFrontmatter } from "types/blog";
+import { NavBarEntry, PostFrontmatter } from "types/blog";
 
 type Props = {
   posts: MDXRemoteSerializeResult[];
   coverBlurDataURLs: string[];
+  navBarEntries: NavBarEntry[];
 };
 
-const Home: NextPage<Props> = ({ posts, coverBlurDataURLs }: Props) => (
-  <CommonLayout>
-    <h1 className="text-3xl">Home Page</h1>
-
+const Home: NextPage<Props> = ({
+  posts,
+  coverBlurDataURLs,
+  navBarEntries,
+}: Props) => (
+  <CommonLayout navBarEntries={navBarEntries}>
     <main className="flex flex-col divide-y items-center px-6">
       {posts.slice(0, 10).map((post, index) => (
-        <div className="py-4 w-full md:max-w-3xl">
-          <PostCard
-            key={(post.frontmatter as unknown as PostFrontmatter).slug}
-            post={post}
-            coverBlurDataURL={coverBlurDataURLs[index]}
-          />
+        <div
+          key={(post.frontmatter as unknown as PostFrontmatter).slug}
+          className="py-4 w-full md:max-w-3xl"
+        >
+          <PostCard post={post} coverBlurDataURL={coverBlurDataURLs[index]} />
         </div>
       ))}
     </main>
@@ -40,8 +42,10 @@ export const getStaticProps: GetStaticProps = async () => {
     )
   );
 
+  const navBarEntries = await getDefaultNavBarEntries();
+
   return {
-    props: { posts, coverBlurDataURLs },
+    props: { posts, coverBlurDataURLs, navBarEntries },
     revalidate: false,
   };
 };
