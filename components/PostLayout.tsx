@@ -9,7 +9,7 @@ type Props = {
 
 const PostLayout = ({ navBarEntries, children }: Props) => (
   <CommonLayout navBarEntries={navBarEntries}>
-    <article className="prose xl:prose-xl">{children}</article>
+    <article className="prose xl:prose-xl mx-auto my-20">{children}</article>
   </CommonLayout>
 );
 

@@ -18,7 +18,7 @@ const Home: NextPage<Props> = ({
   navBarEntries,
 }: Props) => (
   <CommonLayout navBarEntries={navBarEntries}>
-    <main className="flex flex-col divide-y items-center px-6">
+    <main className="flex flex-col divide-y items-center px-6 my-10">
       {posts.slice(0, 10).map((post, index) => (
         <div
           key={(post.frontmatter as unknown as PostFrontmatter).slug}
