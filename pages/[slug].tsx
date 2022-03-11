@@ -31,7 +31,7 @@ const BlogPage: NextPage<Props> = ({ mdxParsed, navBarEntries }: Props) => {
   const { frontmatter } = mdxParsed;
 
   const castedFrontmatter = frontmatter as unknown as PostOrPageFrontmatter;
-  if (castedFrontmatter.type !== "post" && castedFrontmatter !== "page") {
+  if (!["post", "page"].includes(castedFrontmatter.type)) {
     throw Error(`Type invalid: ${castedFrontmatter.type}`);
   }
 
