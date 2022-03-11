@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.paginate {
+  @apply flex justify-center gap-8 py-6;
+}
+
+.paginate li {
+  @apply bg-white border rounded-md w-10 h-10 flex justify-center items-center;
+}
+
+.paginate .selected {
+  @apply bg-black text-white;
+}

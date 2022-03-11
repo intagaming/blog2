@@ -1,40 +1,48 @@
+import blogConfig from "blog.config";
 import CommonLayout from "components/CommonLayout";
-import PostCard from "components/PostCard";
+import PostList from "components/PostList";
 import { getPlaceholder } from "lib/images";
 import { getDefaultNavBarEntries, getPosts } from "lib/server-helpers";
 import type { GetStaticProps, NextPage } from "next";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
+import Link from "next/link";
 import { NavBarEntry, PostFrontmatter } from "types/blog";
+import { FaPlus } from "react-icons/fa";
 
 type Props = {
   posts: MDXRemoteSerializeResult[];
   coverBlurDataURLs: string[];
   navBarEntries: NavBarEntry[];
+  viewArchivePage: number;
 };
 
 const Home: NextPage<Props> = ({
   posts,
   coverBlurDataURLs,
   navBarEntries,
+  viewArchivePage,
 }: Props) => (
   <CommonLayout navBarEntries={navBarEntries}>
-    <main className="flex flex-col divide-y items-center px-6 my-10">
-      {posts.slice(0, 10).map((post, index) => (
-        <div
-          key={(post.frontmatter as unknown as PostFrontmatter).slug}
-          className="py-4 w-full md:max-w-3xl"
-        >
-          <PostCard post={post} coverBlurDataURL={coverBlurDataURLs[index]} />
-        </div>
-      ))}
-    </main>
+    <PostList posts={posts} coverBlurDataURLs={coverBlurDataURLs} />
+
+    <div className="flex justify-end px-10 py-10">
+      <Link href={`/archive/${viewArchivePage}`}>
+        <a className="p-4 border rounded-md flex items-center gap-4">
+          <span>View more posts</span>
+          <FaPlus />
+        </a>
+      </Link>
+    </div>
   </CommonLayout>
 );
 
-export const getStaticProps: GetStaticProps = async () => {
-  const posts = await getPosts();
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  const numberOfPosts = blogConfig.postsOnHomePage;
 
-  const coverBlurDataURLs = await Promise.allSettled(
+  const allPosts = await getPosts();
+  const posts = allPosts.slice(0, numberOfPosts);
+
+  const coverBlurDataURLs = await Promise.all(
     posts.map((post) =>
       getPlaceholder(
         `public/${(post.frontmatter as unknown as PostFrontmatter).cover_url}`
@@ -44,8 +52,14 @@ export const getStaticProps: GetStaticProps = async () => {
 
   const navBarEntries = await getDefaultNavBarEntries();
 
+  const pageCount = Math.ceil(allPosts.length / blogConfig.postsPerArchivePage);
+  const viewArchivePage = Math.min(
+    Math.ceil((numberOfPosts + 1) / blogConfig.postsPerArchivePage),
+    pageCount
+  );
+
   return {
-    props: { posts, coverBlurDataURLs, navBarEntries },
+    props: { posts, coverBlurDataURLs, navBarEntries, viewArchivePage },
     revalidate: false,
   };
 };
