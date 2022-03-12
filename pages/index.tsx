@@ -27,7 +27,7 @@ const Home: NextPage<Props> = ({
 
     <div className="flex justify-center pb-10">
       <Link href={`/archive/${viewArchivePage}`}>
-        <a className="p-4 border rounded-md flex items-center gap-4">
+        <a className="flex items-center gap-4 p-4 border rounded-md">
           <span>View more posts</span>
           <FaPlus />
         </a>

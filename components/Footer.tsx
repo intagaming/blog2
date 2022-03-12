@@ -1,7 +1,7 @@
 import { FaGithub } from "react-icons/fa";
 
 const Footer = () => (
-  <footer className="min-h-32 border-t flex flex-col justify-center items-center py-10">
+  <footer className="flex flex-col items-center justify-center py-10 border-t min-h-32">
     <p>Made by An Hoang with ❤️</p>
     <p>
       This <i>personal</i> blog is open source. Check it out.

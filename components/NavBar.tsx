@@ -22,7 +22,7 @@ const NavBar = ({ entries }: Props) => {
 
   return (
     <>
-      <nav className="flex items-center h-16 px-4 border-b gap-6 dark:bg-neutral-900">
+      <nav className="flex items-center h-16 gap-6 px-4 border-b dark:bg-neutral-900">
         <button
           type="button"
           className="flex-1 md:hidden"
@@ -30,7 +30,7 @@ const NavBar = ({ entries }: Props) => {
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
+            className="w-6 h-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -58,25 +58,25 @@ const NavBar = ({ entries }: Props) => {
           ))}
         </div>
 
-        <div className="flex-1 flex justify-end">
+        <div className="flex justify-end flex-1">
           <ThemeToggle />
         </div>
       </nav>
 
       {extend && (
-        <div className="md:hidden fixed top-0 left-0 w-full h-full z-50 flex flex-col">
+        <div className="fixed top-0 left-0 z-50 flex flex-col w-full h-full md:hidden">
           <div
             ref={menuRef}
-            className="relative bg-white dark:bg-neutral-900 shadow-md h-full w-2/3"
+            className="relative w-2/3 h-full bg-white shadow-md dark:bg-neutral-900"
           >
             <button
               type="button"
-              className="absolute top-0 right-0 p-4 m-2 flex gap-2"
+              className="absolute top-0 right-0 flex gap-2 p-4 m-2"
               onClick={() => setExtend(false)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
+                className="w-6 h-6"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -91,7 +91,7 @@ const NavBar = ({ entries }: Props) => {
               <span>Close</span>
             </button>
 
-            <ul className="w-full h-full flex flex-col justify-center px-4 text-2xl gap-4">
+            <ul className="flex flex-col justify-center w-full h-full gap-4 px-4 text-2xl">
               <li>
                 <Link href="/">
                   <a>Home</a>
