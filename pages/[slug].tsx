@@ -22,7 +22,7 @@ type Props = {
   mdxParsed: MDXRemoteSerializeResult;
   navBarEntries: NavBarEntry[];
   domainUrl: string;
-  seoCover?: { src: string; width: number; height: number };
+  seoCover: { src: string; width: number; height: number } | null;
 };
 
 const mdxComponents: import("mdx/types").MDXComponents = {
@@ -101,10 +101,6 @@ const BlogPage: NextPage<Props> = ({
   );
 };
 
-BlogPage.defaultProps = {
-  seoCover: undefined,
-};
-
 type Params = {
   slug: string;
 };
@@ -129,7 +125,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
 
   const fm = mdxParsed.frontmatter as unknown as PostOrPageFrontmatter;
 
-  let seoCover;
+  let seoCover = null;
   if ("cover_url" in fm) {
     let src = fm.cover_url;
     let remoteUrl;
