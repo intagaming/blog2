@@ -25,6 +25,11 @@ type BlogConfig = {
    * Blog description to use as the description meta for the blog.
    */
   blogDescription: string;
+
+  copyright: {
+    from: number;
+    company: string;
+  };
 };
 
 const blogConfig: BlogConfig = {
@@ -34,6 +39,10 @@ const blogConfig: BlogConfig = {
   postsPerArchivePage: 10,
   bannerUrl: "/images/banner.png",
   blogDescription: "I rant universities and document thought process.",
+  copyright: {
+    from: 2021,
+    company: "An Hoang",
+  },
 };
 
 export default blogConfig;
