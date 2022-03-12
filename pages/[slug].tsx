@@ -1,7 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import blogConfig from "blog.config";
+import Authors from "components/mdx/Authors";
 import NextImage from "components/mdx/NextImage";
 import PostOrPageLayout from "components/PostOrPageLayout";
+import authors from "content/authors";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { glob } from "glob";
 import { getResourceRemoteURL, isRemoteURL } from "lib/helpers";
@@ -51,6 +53,10 @@ const BlogPage: NextPage<Props> = ({
   const publicationDate =
     "publication_date" in castedFm ? castedFm.publication_date : undefined;
 
+  const { bannerUrl, blogName } = blogConfig;
+
+  const authorNames = castedFm.authors.map((a) => authors[a].fullName);
+
   return (
     <>
       <NextSeo
@@ -58,13 +64,13 @@ const BlogPage: NextPage<Props> = ({
         description={castedFm.excerpt}
         canonical={`${domainUrl}`}
         openGraph={{
-          title: `${castedFm.title} | ${blogConfig.blogName}`,
+          title: `${castedFm.title} | ${blogName}`,
           type: "article",
           url: `${domainUrl}/${castedFm.slug}`,
           description: castedFm.excerpt,
           images: [
             {
-              url: cover?.src || blogConfig.bannerUrl,
+              url: cover?.src || bannerUrl,
               width: cover?.width || 1920,
               height: cover?.height || 1080,
               alt: "",
@@ -73,21 +79,23 @@ const BlogPage: NextPage<Props> = ({
           article: {
             publishedTime: publicationDate,
             modifiedTime: publicationDate, // TODO: update with modified_at in the future
-            // authors: ["https://hxann.com/about"], // TODO: use the authors field properly
+            authors: authorNames,
           },
         }}
       />
       <ArticleJsonLd
         url={`${domainUrl}/${castedFm.slug}`}
-        title={`${castedFm.title} | ${blogConfig.blogName}`}
-        images={[cover?.src || blogConfig.bannerUrl]}
+        title={`${castedFm.title} | ${blogName}`}
+        images={[cover?.src || bannerUrl]}
         datePublished={publicationDate || ""}
         dateModified={publicationDate}
-        authorName={blogConfig.blogName} // TODO: author instead of blog name
+        authorName={authorNames}
         description={castedFm.excerpt}
       />
       <PostOrPageLayout navBarEntries={navBarEntries}>
         {renderedMDX}
+        <hr />
+        <Authors authors={castedFm.authors.map((a) => authors[a])} />
       </PostOrPageLayout>
     </>
   );

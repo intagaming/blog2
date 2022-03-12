@@ -1,3 +1,4 @@
+import { getAuthor } from "lib/authors";
 import { parseDate } from "lib/helpers";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import Image from "next/image";
@@ -11,6 +12,9 @@ type Props = {
 
 const PostCard = ({ post, coverBlurDataURL }: Props) => {
   const fm = post.frontmatter as unknown as PostFrontmatter;
+
+  const authors = fm.authors.map((author) => getAuthor(author));
+  const authorsString = authors.map((author) => author?.fullName).join(", ");
 
   return (
     <Link href={`/${fm.slug}`}>
@@ -34,7 +38,7 @@ const PostCard = ({ post, coverBlurDataURL }: Props) => {
               {fm.excerpt}
             </p>
             <p className="text-neutral-700 dark:text-neutral-400">
-              By {fm.author} on{" "}
+              By {authorsString} on{" "}
               {parseDate(fm.publication_date).toLocaleDateString()}
             </p>
           </div>
