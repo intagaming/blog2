@@ -11,6 +11,9 @@ module.exports = {
       colors: {
         primary: colors.indigo[600],
       },
+      fontFamily: {
+        sans: ["Open Sans", "sans-serif"],
+      },
     },
   },
   plugins: [

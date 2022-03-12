@@ -30,8 +30,10 @@ const PostCard = ({ post, coverBlurDataURL }: Props) => {
 
           <div className="flex flex-col gap-4 md:flex-1">
             <h2 className="text-2xl font-bold md:text-3xl">{fm.title}</h2>
-            <p>{fm.excerpt}</p>
-            <p>
+            <p className="text-neutral-700 dark:text-neutral-400">
+              {fm.excerpt}
+            </p>
+            <p className="text-neutral-700 dark:text-neutral-400">
               By {fm.author} on{" "}
               {parseDate(fm.publication_date).toLocaleDateString()}
             </p>
