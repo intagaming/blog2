@@ -1,10 +1,17 @@
+const colors = require("tailwindcss/colors");
+
 module.exports = {
+  darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: colors.indigo[600],
+      },
+    },
   },
   plugins: [
     require("@tailwindcss/typography"),

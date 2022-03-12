@@ -9,7 +9,7 @@ type Props = {
 };
 
 const CommonLayout = ({ navBarEntries, children }: Props) => (
-  <div className="min-h-screen flex flex-col">
+  <div className="min-h-screen flex flex-col dark:bg-neutral-900">
     <NavBar entries={navBarEntries} />
     <div className="flex-1">{children}</div>
     <Footer />

@@ -3,6 +3,7 @@ import useOnClickOutside from "hooks/useOnClickOutside";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { NavBarEntry } from "types/blog";
+import ThemeToggle from "./ThemeToggle";
 
 type Props = {
   entries?: NavBarEntry[];
@@ -21,7 +22,7 @@ const NavBar = ({ entries }: Props) => {
 
   return (
     <>
-      <nav className="flex items-center h-16 px-4 border-b gap-6">
+      <nav className="flex items-center h-16 px-4 border-b gap-6 dark:bg-neutral-900">
         <button
           type="button"
           className="flex-1 md:hidden"
@@ -58,28 +59,16 @@ const NavBar = ({ entries }: Props) => {
         </div>
 
         <div className="flex-1 flex justify-end">
-          <button type="button">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-              />
-            </svg>
-          </button>
+          <ThemeToggle />
         </div>
       </nav>
 
       {extend && (
-        <div className="md:hidden fixed top-0 left-0 w-full h-full shadow-md z-50 flex flex-col">
-          <div ref={menuRef} className="relative bg-white h-full w-2/3">
+        <div className="md:hidden fixed top-0 left-0 w-full h-full z-50 flex flex-col">
+          <div
+            ref={menuRef}
+            className="relative bg-white dark:bg-neutral-900 shadow-md h-full w-2/3"
+          >
             <button
               type="button"
               className="absolute top-0 right-0 p-4 m-2 flex gap-2"
