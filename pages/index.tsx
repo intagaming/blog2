@@ -25,7 +25,7 @@ const Home: NextPage<Props> = ({
   <CommonLayout navBarEntries={navBarEntries}>
     <PostList posts={posts} coverBlurDataURLs={coverBlurDataURLs} />
 
-    <div className="flex justify-center py-10">
+    <div className="flex justify-center pb-10">
       <Link href={`/archive/${viewArchivePage}`}>
         <a className="p-4 border rounded-md flex items-center gap-4">
           <span>View more posts</span>
