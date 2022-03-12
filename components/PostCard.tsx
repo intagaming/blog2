@@ -19,11 +19,11 @@ const PostCard = ({ post, coverBlurDataURL }: Props) => {
   return (
     <Link href={`/${fm.slug}`}>
       <a>
-        <article className="flex flex-col gap-4 md:flex-row">
+        <article className="flex flex-col gap-4 md:flex-row md:gap-10">
           <div className="md:flex-1">
             <div className="relative aspect-w-16 aspect-h-9">
               <Image
-                className="object-cover"
+                className="object-cover rounded-sm"
                 src={fm.cover_url}
                 layout="fill"
                 placeholder="blur"

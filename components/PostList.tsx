@@ -12,7 +12,7 @@ const PostList = ({ posts, coverBlurDataURLs }: Props) => (
     {posts.slice(0, 10).map((post, index) => (
       <div
         key={(post.frontmatter as unknown as PostFrontmatter).slug}
-        className="w-full py-4 md:max-w-3xl"
+        className="w-full py-4 md:max-w-4xl"
       >
         <PostCard post={post} coverBlurDataURL={coverBlurDataURLs[index]} />
       </div>
