@@ -8,11 +8,11 @@ type Props = {
 };
 
 const PostList = ({ posts, coverBlurDataURLs }: Props) => (
-  <main className="flex flex-col items-center px-6 my-10 divide-y">
+  <main className="flex flex-col items-center gap-12 px-6 my-12">
     {posts.slice(0, 10).map((post, index) => (
       <div
         key={(post.frontmatter as unknown as PostFrontmatter).slug}
-        className="w-full py-4 md:max-w-4xl"
+        className="w-full md:max-w-4xl"
       >
         <PostCard post={post} coverBlurDataURL={coverBlurDataURLs[index]} />
       </div>
