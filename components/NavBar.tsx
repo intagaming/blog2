@@ -22,7 +22,7 @@ const NavBar = ({ entries }: Props) => {
 
   return (
     <>
-      <nav className="flex items-center h-16 gap-6 px-4 border-b dark:bg-neutral-900">
+      <nav className="flex items-center h-20 gap-6 px-4 border-b md:px-14 dark:bg-neutral-900">
         <button
           type="button"
           className="flex-1 md:hidden"
