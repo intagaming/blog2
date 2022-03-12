@@ -28,7 +28,7 @@ type BlogConfig = {
 };
 
 const blogConfig: BlogConfig = {
-  navbarLinks: ["about"],
+  navbarLinks: ["about", "contact"],
   blogName: "An Hoang",
   postsOnHomePage: 10,
   postsPerArchivePage: 10,

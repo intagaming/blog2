@@ -50,10 +50,10 @@ const NavBar = ({ entries }: Props) => {
           </a>
         </Link>
 
-        <div className="hidden md:flex flex-[3] text-lg justify-center">
+        <div className="hidden md:flex flex-[3] text-lg justify-center gap-4">
           {entries?.map((entry) => (
             <Link key={entry.slug} href={`/${entry.slug}`}>
-              <a>{entry.title}</a>
+              <a className="p-2">{entry.title}</a>
             </Link>
           ))}
         </div>
