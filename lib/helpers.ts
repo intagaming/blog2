@@ -14,3 +14,18 @@ export function isRemoteURL(url: string) {
   const r = /^(?:[a-z]+:)?\/\//i;
   return r.test(url);
 }
+
+/**
+ * - images/a.jpg
+ * - /images/a.jpg
+ * => https://url/images/a.jpg
+ */
+export function getResourceRemoteURL(path: string) {
+  const parts = path.split("/");
+  if (parts[0] === "") parts.shift();
+
+  const domainUrl =
+    process.env.NEXT_PUBLIC_DOMAIN_URL || "http://localhost:3000";
+
+  return `${domainUrl}/${parts.join("/")}`;
+}

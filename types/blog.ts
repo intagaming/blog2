@@ -15,6 +15,8 @@ export interface PostFrontmatter extends PostOrPageFrontmatterBase {
 export interface PageFrontmatter extends PostOrPageFrontmatterBase {
   type: "page";
   title: string;
+  slug: string;
+  excerpt: string;
 }
 
 export type NavBarEntry = {
