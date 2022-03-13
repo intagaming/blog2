@@ -105,6 +105,22 @@ type Params = {
   slug: string;
 };
 
+export const getStaticPaths: GetStaticPaths<Params> = async () => {
+  const paths: { params: Params }[] = [];
+
+  const matches = glob.sync("content/{posts,pages}/*.mdx");
+
+  matches.forEach((match) => {
+    const slug = path.basename(match, ".mdx");
+    paths.push({ params: { slug } });
+  });
+
+  return {
+    paths,
+    fallback: false,
+  };
+};
+
 export const getStaticProps: GetStaticProps<Props, Params> = async ({
   params,
 }) => {
@@ -145,22 +161,6 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
 
   return {
     props: { mdxParsed, navBarEntries, domainUrl, seoCover },
-  };
-};
-
-export const getStaticPaths: GetStaticPaths<Params> = async () => {
-  const paths: { params: Params }[] = [];
-
-  const matches = glob.sync("content/{posts,pages}/*.mdx");
-
-  matches.forEach((match) => {
-    const slug = path.basename(match, ".mdx");
-    paths.push({ params: { slug } });
-  });
-
-  return {
-    paths,
-    fallback: false,
   };
 };
 

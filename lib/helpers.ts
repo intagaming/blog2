@@ -1,5 +1,7 @@
-// https://stackoverflow.com/a/2587398
-// parse a date in yyyy-mm-dd format
+/**
+ * https://stackoverflow.com/a/2587398
+ * Parse a date in yyyy-mm-dd format
+ */
 export function parseDate(input: string) {
   const parts = input.split("-");
   // new Date(year, month [, day [, hours[, minutes[, seconds[, ms]]]]])
