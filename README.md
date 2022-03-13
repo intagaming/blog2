@@ -64,6 +64,9 @@ The **`#` Markdown heading** (which renders to `h1` in HTML) and the **cover
 image** should be available in the post's Markdown. The post's excerpt is
 recommended as the first line after the `#` heading.
 
+Images are stored in the `public/images` folder. Reference them in the Markdown
+in the format of `/images/my-image.jpg`.
+
 Pages and posts are very similar.
 
 - Pages could be linked to the navbar. Posts are not.
