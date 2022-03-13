@@ -15,8 +15,10 @@ import {
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { ArticleJsonLd, NextSeo } from "next-seo";
+import { useTheme } from "next-themes";
 import path from "path";
 import { NavBarEntry, PostOrPageFrontmatter } from "types/blog";
+import { Utterances } from "utterances-react-component";
 
 type Props = {
   mdxParsed: MDXRemoteSerializeResult;
@@ -40,6 +42,8 @@ const BlogPage: NextPage<Props> = ({
   domainUrl,
   seoCover: cover,
 }: Props) => {
+  const { resolvedTheme } = useTheme();
+
   const { frontmatter: fm } = mdxParsed;
 
   const castedFm = fm as unknown as PostOrPageFrontmatter;
@@ -96,6 +100,11 @@ const BlogPage: NextPage<Props> = ({
         {renderedMDX}
         <hr />
         <Authors authors={castedFm.authors.map((a) => authors[a])} />
+        <Utterances
+          repo="intagaming/blog2"
+          theme={resolvedTheme === "light" ? "github-light" : "github-dark"}
+          issueTerm="pathname"
+        />
       </PostOrPageLayout>
     </>
   );
