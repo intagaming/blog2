@@ -9,9 +9,9 @@
 }
 
 .paginate a {
-  @apply flex items-center justify-center w-10 h-10 bg-white border rounded-md;
+  @apply flex items-center justify-center w-10 h-10 bg-white border rounded-md dark:bg-black dark:text-white;
 }
 
 .paginate .selected a {
-  @apply text-white bg-black;
+  @apply text-white bg-black dark:text-black dark:bg-white;
 }
