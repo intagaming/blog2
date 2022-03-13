@@ -66,7 +66,7 @@ const BlogPage: NextPage<Props> = ({
       <NextSeo
         title={castedFm.title}
         description={castedFm.excerpt}
-        canonical={`${domainUrl}`}
+        canonical={`${domainUrl}/${castedFm.slug}`}
         openGraph={{
           title: `${castedFm.title} | ${blogName}`,
           type: "article",
