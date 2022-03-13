@@ -1,28 +1,26 @@
 import blogConfig from "blog.config";
-import CommonLayout from "components/CommonLayout";
 import PostList from "components/PostList";
+import { getResourceRemoteURL, isRemoteURL } from "lib/helpers";
 import { getPlaceholder } from "lib/images";
 import { getDefaultNavBarEntries, getPosts } from "lib/server-helpers";
 import type { GetStaticProps, NextPage } from "next";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
-import Link from "next/link";
-import { NavBarEntry, PostFrontmatter } from "types/blog";
-import { FaPlus } from "react-icons/fa";
 import { NextSeo } from "next-seo";
-import { getResourceRemoteURL, isRemoteURL } from "lib/helpers";
+import Link from "next/link";
+import { FaPlus } from "react-icons/fa";
+import { PostFrontmatter } from "types/blog";
+import { PageRequiredProps } from "./_app";
 
-type Props = {
+interface Props extends PageRequiredProps {
   posts: MDXRemoteSerializeResult[];
   coverBlurDataURLs: string[];
-  navBarEntries: NavBarEntry[];
   viewArchivePage: number;
   domainUrl: string;
-};
+}
 
 const Home: NextPage<Props> = ({
   posts,
   coverBlurDataURLs,
-  navBarEntries,
   viewArchivePage,
   domainUrl,
 }: Props) => {
@@ -51,18 +49,16 @@ const Home: NextPage<Props> = ({
           ],
         }}
       />
-      <CommonLayout navBarEntries={navBarEntries}>
-        <PostList posts={posts} coverBlurDataURLs={coverBlurDataURLs} />
+      <PostList posts={posts} coverBlurDataURLs={coverBlurDataURLs} />
 
-        <div className="flex justify-center pb-10">
-          <Link href={`/archive/${viewArchivePage}`}>
-            <a className="flex items-center gap-4 p-4 border rounded-md">
-              <span>View more posts</span>
-              <FaPlus />
-            </a>
-          </Link>
-        </div>
-      </CommonLayout>
+      <div className="flex justify-center pb-10">
+        <Link href={`/archive/${viewArchivePage}`}>
+          <a className="flex items-center gap-4 p-4 border rounded-md">
+            <span>View more posts</span>
+            <FaPlus />
+          </a>
+        </Link>
+      </div>
     </>
   );
 };

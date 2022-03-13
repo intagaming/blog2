@@ -2,7 +2,6 @@
 import blogConfig from "blog.config";
 import Authors from "components/mdx/Authors";
 import NextImage from "components/mdx/NextImage";
-import PostOrPageLayout from "components/PostOrPageLayout";
 import authors from "content/authors";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { glob } from "glob";
@@ -17,15 +16,16 @@ import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
 import { ArticleJsonLd, NextSeo } from "next-seo";
 import { useTheme } from "next-themes";
 import path from "path";
-import { NavBarEntry, PostOrPageFrontmatter } from "types/blog";
+import { useEffect, useState } from "react";
+import { PostOrPageFrontmatter } from "types/blog";
 import { Utterances } from "utterances-react-component";
+import { PageRequiredProps } from "./_app";
 
-type Props = {
+interface Props extends PageRequiredProps {
   mdxParsed: MDXRemoteSerializeResult;
-  navBarEntries: NavBarEntry[];
   domainUrl: string;
   seoCover: { src: string; width: number; height: number } | null;
-};
+}
 
 const mdxComponents: import("mdx/types").MDXComponents = {
   // @ts-ignore
@@ -38,7 +38,6 @@ const mdxComponents: import("mdx/types").MDXComponents = {
  */
 const BlogPage: NextPage<Props> = ({
   mdxParsed,
-  navBarEntries,
   domainUrl,
   seoCover: cover,
 }: Props) => {
@@ -96,7 +95,7 @@ const BlogPage: NextPage<Props> = ({
         authorName={authorNames}
         description={castedFm.excerpt}
       />
-      <PostOrPageLayout navBarEntries={navBarEntries}>
+      <article className="px-4 mx-auto my-10 prose dark:prose-invert xl:prose-xl md:my-20 md:px-0">
         {renderedMDX}
         <hr />
         <Authors authors={castedFm.authors.map((a) => authors[a])} />
@@ -105,7 +104,7 @@ const BlogPage: NextPage<Props> = ({
           theme={resolvedTheme === "light" ? "github-light" : "github-dark"}
           issueTerm="pathname"
         />
-      </PostOrPageLayout>
+      </article>
     </>
   );
 };
