@@ -60,6 +60,27 @@ const BlogPage: NextPage<Props> = ({
 
   const authorNames = castedFm.authors.map((a) => authors[a].fullName);
 
+  /**
+   * We need to change the key of <Utterances /> in order to force unmount it,
+   * thus update its URL and theme. Without unmounting, there's no way for the
+   * component to recognize URL and theme change.
+   * https://stackoverflow.com/a/48451229
+   */
+  const [utterancesKey, setUtteranceKey] = useState(0);
+  useEffect(() => {
+    setUtteranceKey((k) => (k + 1) % 2);
+
+    /**
+     * We might also remove the last <style> tag that utterances inserted in the
+     * <head> section. Or else we could build up tons of same <style> tag.
+     */
+    document.head.querySelectorAll("style").forEach((el) => {
+      if (el.innerHTML.match(/\.utterances/)) {
+        el.remove();
+      }
+    });
+  }, [mdxParsed, resolvedTheme]);
+
   return (
     <>
       <NextSeo
@@ -100,6 +121,7 @@ const BlogPage: NextPage<Props> = ({
         <hr />
         <Authors authors={castedFm.authors.map((a) => authors[a])} />
         <Utterances
+          key={utterancesKey}
           repo="intagaming/blog2"
           theme={resolvedTheme === "light" ? "github-light" : "github-dark"}
           issueTerm="pathname"
