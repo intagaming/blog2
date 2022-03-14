@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import blogConfig from "blog.config";
-import Authors from "components/mdx/Authors";
+import Authors from "components/Authors";
 import NextImage from "components/mdx/NextImage";
 import authors from "content/authors";
 // eslint-disable-next-line import/no-extraneous-dependencies
