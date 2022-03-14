@@ -1,7 +1,8 @@
 import blogConfig from "blog.config";
 import useOnClickOutside from "hooks/useOnClickOutside";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
 import { NavBarEntry } from "types/blog";
 import ThemeToggle from "./ThemeToggle";
 
@@ -11,14 +12,27 @@ type Props = {
 
 const NavBar = ({ entries }: Props) => {
   const [extend, setExtend] = useState(false);
+  const router = useRouter();
 
   const menuRef = useRef(null);
 
-  const handleClickOutsideMenu = () => {
+  const closeMenu = () => {
     setExtend(false);
   };
 
-  useOnClickOutside(menuRef, handleClickOutsideMenu);
+  useOnClickOutside(menuRef, closeMenu);
+
+  useEffect(() => {
+    const handleRouteChangeStart = () => {
+      closeMenu();
+    };
+
+    router.events.on("routeChangeStart", handleRouteChangeStart);
+
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChangeStart);
+    };
+  }, [router.events]);
 
   return (
     <>
