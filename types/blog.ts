@@ -1,3 +1,5 @@
+import { MDXRemoteSerializeResult } from "next-mdx-remote";
+
 export interface PostOrPageFrontmatterBase {
   type?: PostFrontmatter["type"] | PageFrontmatter["type"];
 }
@@ -27,3 +29,8 @@ export type NavBarEntry = {
 };
 
 export type PostOrPageFrontmatter = PostFrontmatter | PageFrontmatter;
+
+export type NextAndLastPost = {
+  last: MDXRemoteSerializeResult | null;
+  next: MDXRemoteSerializeResult | null;
+};

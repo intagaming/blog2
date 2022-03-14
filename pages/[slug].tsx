@@ -2,6 +2,7 @@
 import blogConfig from "blog.config";
 import Authors from "components/Authors";
 import NextImage from "components/mdx/NextImage";
+import PostLastNextNav from "components/PostLastNextNav";
 import authors from "content/authors";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { glob } from "glob";
@@ -9,6 +10,7 @@ import { getResourceRemoteURL, isRemoteURL } from "lib/helpers";
 import { getDimensions } from "lib/images";
 import {
   getDefaultNavBarEntries,
+  getNextAndLastPosts as getNextAndLastPost,
   getParsedMDXFromSlug,
 } from "lib/server-helpers";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
@@ -17,7 +19,11 @@ import { ArticleJsonLd, NextSeo } from "next-seo";
 import { useTheme } from "next-themes";
 import path from "path";
 import { useEffect, useState } from "react";
-import { PostOrPageFrontmatter } from "types/blog";
+import {
+  NextAndLastPost,
+  PostFrontmatter,
+  PostOrPageFrontmatter,
+} from "types/blog";
 import { Utterances } from "utterances-react-component";
 import { PageRequiredProps } from "./_app";
 
@@ -25,6 +31,7 @@ interface Props extends PageRequiredProps {
   mdxParsed: MDXRemoteSerializeResult;
   domainUrl: string;
   seoCover: { src: string; width: number; height: number } | null;
+  nextAndLastPost?: NextAndLastPost;
 }
 
 const mdxComponents: import("mdx/types").MDXComponents = {
@@ -40,6 +47,7 @@ const BlogPage: NextPage<Props> = ({
   mdxParsed,
   domainUrl,
   seoCover: cover,
+  nextAndLastPost,
 }: Props) => {
   const { resolvedTheme } = useTheme();
 
@@ -120,6 +128,14 @@ const BlogPage: NextPage<Props> = ({
         {renderedMDX}
         <hr />
         <Authors authors={castedFm.authors.map((a) => authors[a])} />
+        <PostLastNextNav
+          last={
+            nextAndLastPost?.last?.frontmatter as unknown as PostFrontmatter
+          }
+          next={
+            nextAndLastPost?.next?.frontmatter as unknown as PostFrontmatter
+          }
+        />
         <Utterances
           key={utterancesKey}
           repo="intagaming/blog2"
@@ -129,6 +145,10 @@ const BlogPage: NextPage<Props> = ({
       </article>
     </>
   );
+};
+
+BlogPage.defaultProps = {
+  nextAndLastPost: undefined,
 };
 
 type Params = {
@@ -189,8 +209,10 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({
     };
   }
 
+  const nextAndLastPost = await getNextAndLastPost(slug);
+
   return {
-    props: { mdxParsed, navBarEntries, domainUrl, seoCover },
+    props: { mdxParsed, navBarEntries, domainUrl, seoCover, nextAndLastPost },
   };
 };
 

@@ -5,7 +5,12 @@ import glob from "glob-promise";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
 import { basename } from "path";
-import { NavBarEntry, PageFrontmatter, PostFrontmatter } from "types/blog";
+import {
+  NavBarEntry,
+  NextAndLastPost,
+  PageFrontmatter,
+  PostFrontmatter,
+} from "types/blog";
 import { parseDate } from "./helpers";
 import { removeImageParagraph, optimizeImages } from "./unified";
 
@@ -74,4 +79,17 @@ export const getPosts = async (): Promise<MDXRemoteSerializeResult[]> => {
   });
 
   return posts;
+};
+
+export const getNextAndLastPosts = async (
+  postSlug: string
+): Promise<NextAndLastPost> => {
+  const posts = await getPosts();
+  const foundAt = posts.findIndex(
+    (p) => (p.frontmatter as unknown as PostFrontmatter)?.slug === postSlug
+  );
+  if (foundAt === -1) {
+    return { last: null, next: null };
+  }
+  return { last: posts[foundAt + 1] ?? null, next: posts[foundAt - 1] ?? null };
 };
