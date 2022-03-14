@@ -1,5 +1,4 @@
 import blogConfig from "blog.config";
-import CommonLayout from "components/CommonLayout";
 import Paginate from "components/Paginate";
 import PostList from "components/PostList";
 import { getPlaceholder } from "lib/images";
@@ -10,27 +9,26 @@ import {
 } from "lib/server-helpers";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
-import { NavBarEntry, PostFrontmatter } from "types/blog";
+import { PageRequiredProps } from "pages/_app";
+import { PostFrontmatter } from "types/blog";
 
-type Props = {
+interface Props extends PageRequiredProps {
   posts: MDXRemoteSerializeResult[];
   coverBlurDataURLs: string[];
-  navBarEntries: NavBarEntry[];
   currentPage: number;
   pageCount: number;
-};
+}
 
 const Archive: NextPage<Props> = ({
   posts,
   coverBlurDataURLs,
-  navBarEntries,
   currentPage,
   pageCount,
 }: Props) => (
-  <CommonLayout navBarEntries={navBarEntries}>
+  <>
     <PostList posts={posts} coverBlurDataURLs={coverBlurDataURLs} />{" "}
     <Paginate currentPage={currentPage} pageCount={pageCount} />
-  </CommonLayout>
+  </>
 );
 
 type Params = {
