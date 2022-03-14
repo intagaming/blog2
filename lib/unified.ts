@@ -1,10 +1,10 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable import/prefer-default-export */
 
+import { Element, Parent } from "hast";
 import { ImageElement } from "types/hast";
 import { Plugin } from "unified";
-import { visit } from "unist-util-visit";
+import { CONTINUE, SKIP, visit } from "unist-util-visit";
 import { getDimensions, getPlaceholder } from "./images";
 
 // Converts <img> to <Image> and assign width & height
@@ -32,6 +32,27 @@ export const optimizeImages: Plugin<[]> = () => async (tree) => {
   });
 
   await Promise.allSettled(promises);
+
+  return tree;
+};
+
+/**
+ * This converts any <p> that has an <Image> inside to a <div>.
+ * This plugin must be ran **after** the `optimizeImages` plugin.
+ */
+export const removeImageParagraph: Plugin<[]> = () => async (tree) => {
+  visit(tree, { tagName: "p" }, (node: Element, index, parent: Parent) => {
+    const hasImageTag = node.children.some(
+      (c) => c.type === "element" && c.tagName === "Image"
+    );
+
+    // If there's any <Image> tag in this <p>...
+    if (!hasImageTag) return CONTINUE;
+
+    // ... then remove the paragraph, bring children outside
+    parent.children.splice(index, 1, ...node.children);
+    return [SKIP, index];
+  });
 
   return tree;
 };

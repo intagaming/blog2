@@ -7,7 +7,7 @@ import { serialize } from "next-mdx-remote/serialize";
 import { basename } from "path";
 import { NavBarEntry, PageFrontmatter, PostFrontmatter } from "types/blog";
 import { parseDate } from "./helpers";
-import { optimizeImages } from "./unified";
+import { removeImageParagraph, optimizeImages } from "./unified";
 
 export const getMDXPathFromSlug = async (slug: string): Promise<string> => {
   const matches = await glob(`content/**/${slug}.mdx`);
@@ -30,7 +30,7 @@ export const getParsedMDXFromSlug = async (
   const parsed = await serialize(mdx, {
     parseFrontmatter: true,
     mdxOptions: {
-      rehypePlugins: [optimizeImages],
+      rehypePlugins: [optimizeImages, removeImageParagraph],
     },
   });
   return parsed;
