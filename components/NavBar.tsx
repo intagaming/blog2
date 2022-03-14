@@ -1,4 +1,5 @@
 import blogConfig from "blog.config";
+import classNames from "classnames";
 import useOnClickOutside from "hooks/useOnClickOutside";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -77,51 +78,58 @@ const NavBar = ({ entries }: Props) => {
         </div>
       </nav>
 
-      {extend && (
-        <div className="fixed top-0 left-0 z-50 flex flex-col w-full h-full md:hidden">
-          <div
-            ref={menuRef}
-            className="relative w-2/3 h-full bg-white shadow-md dark:bg-neutral-900"
+      <>
+        <div
+          className={classNames(
+            extend ? undefined : "hidden",
+            `fixed top-0 left-0 w-full h-full z-50`
+          )}
+        />
+        <div
+          ref={menuRef}
+          className={classNames(
+            "fixed top-0 left-0 transition-transform ease-in-out duration-300 w-2/3 h-full z-50 bg-white shadow-md dark:bg-neutral-900",
+            extend ? "translate-x-0" : "-translate-x-[67vw]"
+          )}
+        >
+          <button
+            type="button"
+            className="absolute top-0 right-0 flex gap-2 p-4 m-2"
+            onClick={() => setExtend(false)}
           >
-            <button
-              type="button"
-              className="absolute top-0 right-0 flex gap-2 p-4 m-2"
-              onClick={() => setExtend(false)}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-              <span>Close</span>
-            </button>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+            <span>Close</span>
+          </button>
 
-            <ul className="flex flex-col justify-center w-full h-full gap-4 px-4 text-2xl">
-              <li>
-                <Link href="/">
-                  <a>Home</a>
+          <ul className="flex flex-col justify-center w-full h-full gap-4 px-4 text-2xl">
+            <li>
+              <Link href="/">
+                <a>Home</a>
+              </Link>
+            </li>
+            {entries?.map((entry) => (
+              <li key={entry.slug}>
+                <Link href={`/${entry.slug}`}>
+                  <a>{entry.title}</a>
                 </Link>
               </li>
-              {entries?.map((entry) => (
-                <li key={entry.slug}>
-                  <Link href={`/${entry.slug}`}>
-                    <a>{entry.title}</a>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+            ))}
+          </ul>
         </div>
-      )}
+      </>
     </>
   );
 };
