@@ -1,10 +1,11 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import blogConfig from "blog.config";
 import { readFile } from "fs/promises";
-// eslint-disable-next-line import/no-extraneous-dependencies
 import glob from "glob-promise";
 import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
 import { basename } from "path";
+import rehypeHighlight from "rehype-highlight";
 import {
   NavBarEntry,
   NextAndLastPost,
@@ -12,7 +13,7 @@ import {
   PostFrontmatter,
 } from "types/blog";
 import { parseDate } from "./helpers";
-import { removeImageParagraph, optimizeImages } from "./unified";
+import { optimizeImages, removeImageParagraph } from "./unified";
 
 export const getMDXPathFromSlug = async (slug: string): Promise<string> => {
   const matches = await glob(`content/**/${slug}.mdx`);
@@ -35,7 +36,7 @@ export const getParsedMDXFromSlug = async (
   const parsed = await serialize(mdx, {
     parseFrontmatter: true,
     mdxOptions: {
-      rehypePlugins: [optimizeImages, removeImageParagraph],
+      rehypePlugins: [optimizeImages, removeImageParagraph, rehypeHighlight],
     },
   });
   return parsed;

@@ -1,10 +1,10 @@
-import "../styles/globals.css";
-import type { AppProps } from "next/app";
-import { ThemeProvider } from "next-themes";
-import { DefaultSeo } from "next-seo";
 import blogConfig from "blog.config";
 import CommonLayout from "components/CommonLayout";
+import { DefaultSeo } from "next-seo";
+import { ThemeProvider } from "next-themes";
+import type { AppProps } from "next/app";
 import { NavBarEntry } from "types/blog";
+import "../styles/globals.css";
 
 export interface PageRequiredProps {
   navBarEntries: NavBarEntry[];

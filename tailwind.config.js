@@ -14,6 +14,26 @@ module.exports = {
       fontFamily: {
         sans: ["Open Sans", "sans-serif"],
       },
+      /**
+       * Override the <pre> background color. I couldn't get the
+       * --tw-prose-invert-pre-bg to work, so here it is.
+       */
+      typography: {
+        DEFAULT: {
+          css: {
+            pre: {
+              "--tw-prose-pre-bg": "#fff",
+            },
+          },
+        },
+        invert: {
+          css: {
+            pre: {
+              "--tw-prose-pre-bg": "#0d1117",
+            },
+          },
+        },
+      },
     },
   },
   plugins: [
