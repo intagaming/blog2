@@ -4,14 +4,20 @@ import { animated, config, useTransition } from "react-spring";
 
 const ThemeToggle = () => {
   const { setTheme, resolvedTheme } = useTheme();
+
+  const [mounted, setMounted] = useState(false);
+
   const transition = useTransition<string, CSSProperties>(resolvedTheme, {
-    from: { position: "absolute", transform: "scale(1.5)", opacity: 0 },
+    from: {
+      position: "absolute",
+      transform: !mounted ? "scale(1)" : "scale(1.5)",
+      opacity: !mounted ? 1 : 0,
+    },
     enter: { transform: "scale(1)", opacity: 1 },
     leave: { transform: "scale(0.5)", opacity: 0 },
     config: { ...config.molasses, duration: 300 },
   });
 
-  const [mounted, setMounted] = useState(false);
   // When mounted on client, now we can show the UI
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
