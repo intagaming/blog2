@@ -12,11 +12,10 @@ database, you can just `npm run dev` and be on your way.
 ## Who is interested in this?
 
 If you're interested in using this repo as a blog, I think you should already be
-interested in practicing Next.js/React. It is trivial for writing new blog
-posts, though for utilizing the power of MDX (an extension of Markdown), you
-should be aware of its capability of interpolating React components into the
-Markdown. It is extensible, but it is non-trivial for a non-developer to do
-that.
+interested in practicing Next.js/React. It is trivial to write new blog posts,
+though to utilize the power of MDX (an extension of Markdown), you should be
+aware of its capability of interpolating React components into the Markdown. It
+is extensible, but it is non-trivial for a non-developer to do that.
 
 ## Features
 
