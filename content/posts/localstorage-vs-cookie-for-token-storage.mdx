@@ -14,6 +14,58 @@ cover_url: /images/cookie.jpg
 
 localStorage is not as unsecured as you'd think.
 
+## Context
+
+Some time ago, I had to store the JWT token returned from Strapi in a React web
+app. Strapi is a **stateless** server. The React app is **client-side**. Here's
+what the internet has to say when I need to learn "jwt storage":
+
+![jwt-storage-google](/images/jwt-storage-google.png)
+
+Seems like most opposed to the idea of using `localStorage`.
+
+What about "react jwt storage"?
+
+![react-jwt-storage-google](/images/react-jwt-storage-google.png)
+
+First one that recommends `localStorage`! Hmm, there are also people that
+recommend storing JWT in Cookie. Also, there's a recommendation of using
+in-memory storage. [It's not persistent. I don't want to login every page
+refreshes.][8] So let's not talk about it.
+
+Let's dig into [the first StackOverflow post][9] above:
+
+![jwt-first-so-answer](/images/jwt-first-so-answer.png)
+
+Okay. They said that I should use cookies and refresh token instead. And the
+Refresh Token should be stored in a cookie with `httpOnly` flag. Hold that idea
+for a second.
+
+How about [the second post][10]:
+
+![jwt-second-so-answer](/images/jwt-second-so-answer.png)
+
+Interesting. Two posts that recommend the same Cookie approach. Look at the 3rd
+point. They said that I should store my JWT in a Cookie, because in point number
+2, `localStorage` is exposed to XSS. Is Cookie **immune to XSS**? What about
+**CSRF**? My server is stateless, and as you read on this blog post further,
+you'll need to implement the _Double Submit Cookie_ CSRF prevention technique
+(I'm using **stateless** server, remember), which is **NOT** immune to XSS,
+because the CSRF token also needs to be present in the request body. Not to
+mention that now you have to prevent both XSS _and_ CSRF. Hence the 3rd point is
+not valid, in my opinion, just because of the XSS argument alone.
+
+You can see the problem here. Back then, I didn't knowledgeable enough to know
+that storing JWT in Cookie have problems. It's easy to blindly listen to these
+SO answers when you're starting out as an intern (Yes, I had to implement this
+in my internship). Obviously, this needs to be addressed. If someone is in the
+same boot as me trying to get into the new Serverless world, they need to know
+the reasoning behind these.
+
+## Original post starts here:
+
+---
+
 You know the drill. Authentication time, you chuck the access token into your
 `localStorage`. Suddenly you have a flashback of bad luck working with
 `localStorage`, namely they could _easily_ be taken by a script via Cross-Site
@@ -34,14 +86,17 @@ Cheat Sheet, I have to implement something called a _Double Submit Cookie_ (I'm
 cutting corners here, we are in a stateless development age, there's no server
 state, just in case you wonder why not the _Synchronizer Token Pattern_).
 
+> **DISCLAIMER**: This is simplified. In practice, the request is more likely to
+> be in the form of a `POST` request instead of `GET` like the below CSRF example.
+
 I'm at the Cheat Sheet. Here's the steps:
 
 1. On the server side, I would have to generate a pseudorandom value and put
    them in a cookie.
 2. Every time I need to send out a request, I would put that value (also called
    a CSRF token) into a header field - something along the lines of
-   `X-XSRF-Token` - and the request body (the request parameter if it's a GET
-   request, and in the JSON body if it's not a GET request).
+   `X-XSRF-Token` - and the request body **(the request parameter if it's a GET
+   request, and in the JSON body if it's not a GET request)**.
 3. On the server side again, I would have to implement a comparison between
    those two.
 
@@ -51,18 +106,17 @@ The end result is, if the attacker do the CSRF now, they would need to:
    enough. For example, `GET /api?csrfToken=MY_DUMMY_VALUE`
 2. Modify the `csrfToken` cookie to `MY_DUMMY_VALUE`. Not trivial, but doable.
 
-[Now you go read this document from OWASP and find out that your attempt is flawed.][2]
-Then,
-[read this from StackOverflow if you store the csrfToken not in the cookie, but in localStorage][3].
-If you go as far as using `httpOnly SameSite=Strict Secure` settings, remember
-that
+[Now you go read this document from OWASP and find out that your CSRF prevention
+attempt is flawed.][2] Then, [read this from StackOverflow if you store the
+csrfToken not in the cookie, but in localStorage][3] (obviously not). If you go
+as far as using `httpOnly SameSite=Strict Secure` settings, remember that
 [Setting a cookie as Strict can affect browsing experience negatively][4].
 
 ### Here's my take on it.
 
 See, you **have to** put the CSRF token in the body. That means your CSRF token
 _cannot_ be `httpOnly`, because it prevents JavaScript from reading the cookie.
-Have you realized yet? You just achieved Cross-Site Scripting. If your
+Have you realized yet? You've just achieved Cross-Site Scripting. If your
 JavaScript can read your cookie, so do mine.
 
 > But it makes the access token harder for the attacker to get than
@@ -73,9 +127,9 @@ Do you sleep well on that? You have just gone full circle. `localStorage` has
 XSS problem, but cookie has CSRF **and** XSS. _That's why I'm not eating the
 cookies_.
 
-Side note: About the Refresh Token, it does not solve anything. Just face it,
-you are storing your Refresh Token in some way that could be susceptible to XSS
-attacks. It's game over then. Check your implementation if you have any doubt.
+Side note: About the Refresh Token, it solves nothing. It is still a token.
+Store it in the Cookie and you have CSRF **and** XSS, just like a normal token.
+You can't use `httpOnly` if you want to prevent CSRF.
 
 ## Fixing the myth of localStorage by mending XSS
 
@@ -104,12 +158,17 @@ _Why do I have so many questions for you?_
 
 If you're using libraries from CDNs I think you're having a bigger problem.
 
+**Now, to be clear.** Maybe you are forced to use libraries from CDNs, because
+something like "They don't update it anymore!" or "I don't want to use NPM for
+my little HTML/CSS/JS project!". I use NPM, it's **the repo** to get JavaScript
+libraries from, and I don't have your headache.
+
 ### XSS from JS injection
 
 Also called a _Stored XSS_. Or any JS injection from _form inputs_. It's pretty
 hard to screw up something that would cause XSS without you knowing first-hand.
-[Take a look at this StackOverflow on why React has some XSS-proof.][6]
-Make sure to make use of some ESLint, those are pretty handy.
+[Take a look at this StackOverflow on why React has some XSS-proof.][6] Make
+sure to make use of some ESLint rules, those are pretty handy.
 
 In the nutshell, it's pretty hard these days to get XSS if you're doing things
 right.
@@ -131,3 +190,6 @@ Here's something you'll dig:
 [5]: https://docs.gitlab.com/ee/user/application_security/dependency_scanning
 [6]: https://stackoverflow.com/q/33644499
 [7]: https://pragmaticwebsecurity.com/articles/oauthoidc/localstorage-xss.html
+[8]: https://auth0.com/docs/secure/security-guidance/data-security/token-storage#browser-in-memory-scenarios
+[9]: https://stackoverflow.com/questions/39176237/how-do-i-store-jwt-and-send-them-with-every-request-using-react
+[10]: https://stackoverflow.com/questions/69294536/where-to-store-jwt-token-in-react-client-side-in-secure-way
