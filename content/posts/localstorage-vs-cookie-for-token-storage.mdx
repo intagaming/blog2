@@ -79,15 +79,16 @@ Whenever you touch a cookie, you are blessed with a **new** problem: Cross-Site
 Request Forgery a.k.a. CSRF. Take this from OWASP Cheat Sheet of CSRF
 Prevention, I'll provide an example later.
 
-> [Remember that any Cross-Site Scripting (XSS) can be used to defeat all CSRF mitigation techniques!][1]
+> [Remember that any Cross-Site Scripting (XSS) can be used to defeat all CSRF
+> mitigation techniques!][1]
 
 Let's switch gears here. I'm gonna implement a CSRF mitigation. According to the
 Cheat Sheet, I have to implement something called a _Double Submit Cookie_ (I'm
 cutting corners here, we are in a stateless development age, there's no server
 state, just in case you wonder why not the _Synchronizer Token Pattern_).
 
-> **DISCLAIMER**: This is simplified. In practice, the request is more likely to
-> be in the form of a `POST` request instead of `GET` like the below CSRF example.
+> **DISCLAIMER**: This is simplified. I'm sure there's more sophisticated ways
+> to perform the CSRF attack.
 
 I'm at the Cheat Sheet. Here's the steps:
 
@@ -100,24 +101,63 @@ I'm at the Cheat Sheet. Here's the steps:
 3. On the server side again, I would have to implement a comparison between
    those two.
 
-The end result is, if the attacker do the CSRF now, they would need to:
+Here's a visualization of what's going on:
 
-1. Set a freshly dummy value, replacing the CSRF token in the request body. Easy
-   enough. For example, `GET /api?csrfToken=MY_DUMMY_VALUE`
-2. Modify the `csrfToken` cookie to `MY_DUMMY_VALUE`. Not trivial, but doable.
+![double-submit](/images/double-submit.png)
+
+The end result is, if the attacker wants to do the CSRF now, they would need to:
+
+1. Set a freshly dummy value, replacing the CSRF token in the request
+   body/header. Easy enough. For example:
+   ```
+   POST /user/transfer
+   X-CSRF-Token: MY_DUMMY_VALUE
+   ```
+2. Modify the `csrfToken` cookie to `MY_DUMMY_VALUE`. _Not trivial_, but
+   [doable][2].
+   ```
+   POST /user/transfer
+   Cookie: csrfToken=MY_DUMMY_VALUE
+   X-CSRF-Token: MY_DUMMY_VALUE
+   ```
+3. This request is placed within a malicious site, e.g.
+   `https://malicious.example`. Using JavaScript, the POST request is submitted.
+   Depending on the `SameSite` flag and the browser's implementation, the
+   `accessToken` Cookie would be sent.
+
+Okay, it's pretty good if combined with some `Cross-Origin-Resource-Policy` and
+`SameSite` or some other things. CSRF solved.
 
 [Now you go read this document from OWASP and find out that your CSRF prevention
-attempt is flawed.][2] Then, [read this from StackOverflow if you store the
-csrfToken not in the cookie, but in localStorage][3] (obviously not). If you go
-as far as using `httpOnly SameSite=Strict Secure` settings, remember that
-[Setting a cookie as Strict can affect browsing experience negatively][4].
+attempt is flawed.][2] Then, _hopefully not_, [read this from StackOverflow if
+you store the csrfToken not in the cookie, but in localStorage][3]. If you go as
+far as using `SameSite=Strict` setting, remember that [Setting a cookie as
+Strict can affect browsing experience negatively][4], meaning a setting of
+`SameSite=Lax` still leaves top-level `GET` alone.
+
+If that's not enough, **not all APIs are equipped with CSRF prevention
+framework.** Google "Strapi CSRF" and you'll basically find nothing besides of
+implementing CSRF prevention yourself. Why? Because _Strapi is not setting the
+token in a cookie_.
+
+**However**, assuming that CSRF is absolutely prevented, there's still the
+elephant in the room, the _absolute_ CSRF prevention buster. Read on.
 
 ### Here's my take on it.
 
-See, you **have to** put the CSRF token in the body. That means your CSRF token
-_cannot_ be `httpOnly`, because it prevents JavaScript from reading the cookie.
-Have you realized yet? You've just achieved Cross-Site Scripting. If your
-JavaScript can read your cookie, so do mine.
+See, you still **have to** put the CSRF token in the body, by design. That means
+your CSRF token _cannot_ be `httpOnly`, because it prevents JavaScript from
+reading the cookie. Have you realized yet? You've just achieved Cross-Site
+Scripting. If your JavaScript can read your cookie, so do mine.
+
+Here it is again:
+
+> [Remember that any Cross-Site Scripting (XSS) can be used to defeat all CSRF
+> mitigation techniques!][1]
+
+[And here's how.][11]
+
+If you say
 
 > But it makes the access token harder for the attacker to get than
 > localStorage! If not they'd just snatch it!
@@ -193,3 +233,4 @@ Here's something you'll dig:
 [8]: https://auth0.com/docs/secure/security-guidance/data-security/token-storage#browser-in-memory-scenarios
 [9]: https://stackoverflow.com/questions/39176237/how-do-i-store-jwt-and-send-them-with-every-request-using-react
 [10]: https://stackoverflow.com/questions/69294536/where-to-store-jwt-token-in-react-client-side-in-secure-way
+[11]: https://portswigger.net/web-security/cross-site-scripting/exploiting/lab-perform-csrf
