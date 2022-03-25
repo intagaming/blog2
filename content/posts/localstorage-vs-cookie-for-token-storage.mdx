@@ -95,9 +95,8 @@ I'm at the Cheat Sheet. Here's the steps:
 1. On the server side, I would have to generate a pseudorandom value and put
    them in a cookie.
 2. Every time I need to send out a request, I would put that value (also called
-   a CSRF token) into a header field - something along the lines of
-   `X-XSRF-Token` - and the request body **(the request parameter if it's a GET
-   request, and in the JSON body if it's not a GET request)**.
+   a CSRF token) into a header field, something along the lines of
+   `X-XSRF-Token`. The Cookie from step 1 is sent along with the request.
 3. On the server side again, I would have to implement a comparison between
    those two.
 
